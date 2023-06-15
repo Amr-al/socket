@@ -4,7 +4,7 @@ const io = require("socket.io")(5000, {
   },
 });
 
-let requests = [];
+let requests = [] , users = [];
 
 let meetingId;
 
@@ -24,14 +24,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sendMessage", (data) => {
-    console.log("ffff", data);
+    // console.log("ffff", data);
     data.users.forEach((person) => {
       socket.to(person._id).emit("messageSent");
     });
   });
 
   socket.on("updateAllChats", (data) => {
-    console.log("yyy ", data);
+    // console.log("yyy ", data);
     data.users.forEach((person) => {
       socket.to(person._id).emit("updateAllChats");
     });
@@ -44,12 +44,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("typing", (data) => {
-    console.log("xxx", data);
+    // console.log("xxx", data);
     socket.broadcast.to(data.id).emit("typing", data.user);
   });
 
   socket.on("stop typing", (data) => {
-    console.log("ssss", data);
+    // console.log("ssss", data);
     socket.broadcast.to(data.id).emit("stop typing", data.user);
   });
 
@@ -89,4 +89,13 @@ io.on("connection", (socket) => {
 
     socket.to(meetingId).emit("toHost", { requests, userId, hostId });
   });
+  
+  socket.on('friendReq',(id)=>{
+    // console.log('uuuuuuuuu',id)
+    socket.to(id).emit('friendReq')
+  })
+  socket.on('invitReq',(id)=>{
+    console.log('sssssss',id);
+    socket.to(id).emit('invitReq')
+  })
 });
